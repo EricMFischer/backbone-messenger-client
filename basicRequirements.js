@@ -14,10 +14,10 @@
   5) Allow users to create rooms and enter existing rooms -- DONE
 
   6) Allow users to 'befriend' other users by clicking on their 
-  username
+  username -- DONE
 
-  7) Display all messages sent by friends in bold
+  7) Display all messages sent by friends in bold -- DONE
 
   8) Complete the Hack Reactor Backbone intro (you have access 
-  to this repo on github)
+  to this repo on github) -- DONE
 */

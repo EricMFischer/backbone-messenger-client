@@ -11,7 +11,7 @@ $(document).ready(function () {
     app.addRoom(roomName);
   });
   $('#roomSelect').on('change', function () {
-    app.appendMessages(app.messages);
+    app.updateMessages();
   });
   app.init();
 });
@@ -47,9 +47,8 @@ app.fetch = function () {
     url: app.server,
     type: 'GET',
     success: function (data) {
-      var messages = data.results;
-      app.messages = messages;
-      app.appendMessages(messages);
+      app.messages = data.results;
+      app.updateMessages();
       setTimeout(app.fetch, 30000);
     }
   });
@@ -60,29 +59,28 @@ app.clearMessages = function () {
 };
 
 app.addMessage = function (message) {
-  var html = '<span data-username="';
-  html += message.username;
-  html += '">';
-  html += '<span class="username">';
-  html += message.username;
-  html += '</span>';
-  html += ': ';
-  html += app.sanitizeInput(message.text || '');
-  html += '</span>';
-  html += '<br />';
+  var html = [
+    '<div data-username="' + message.username + '">',
+      '<span class="username">' + message.username + '</span>',
+      ': ' + app.sanitizeInput(message.text || ''),
+    '</div>'
+  ];
+  html = html.join('');
   var $html = $(html);
+  if (app.friends[message.username] === true) $html.addClass('friend'); // As we add individual messages, check to see if that message was sent by a friend
   $('#chats').append($html);
-  $html.on('click', function() {
-    app.addFriend(message.username);
+  $html.find('.username').on('click', function() { // We are anticipatorily adding click hander events to every $html message added to the DOM.
+    app.addFriend(message.username);               // In the event you click on a username for a particular message, that person gets added to friends
   });
 };
 
 app.addRoom = function (roomName) {
-  var html = '<option value="';
-  html += roomName;
-  html += '">';
-  html += roomName;
-  html += '</option>';
+  var html = [
+    '<option value="' + roomName + '">',
+      roomName,
+    '</option>'
+  ];
+  html = html.join('');
   $('#roomSelect').append(html);
   $('#roomSelect').val(roomName);
   $('#roomSelect').trigger('change');
@@ -109,19 +107,18 @@ app.sanitizeInput = function (input) {
   return output;
 };
 
-app.filterByRoom = function (messages) {
+app.filterByRoom = function () {
   var roomName = $('#roomSelect').val();
-  if (!roomName) return messages;
-  return _.filter(messages, function(message) {
+  if (!roomName) return app.messages;
+  return _.filter(app.messages, function(message) {
     return message.roomname === roomName;
   });
 };
 
-app.appendMessages = function (messages) {
+app.updateMessages = function () {
   app.clearMessages();
-  messages = app.filterByRoom(messages);
+  var messages = app.filterByRoom();
   messages.forEach(function (message) {
     app.addMessage(message);
   });
-  $('[data-username="'+friend+'"]').addClass('friend');
 };
