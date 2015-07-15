@@ -2,9 +2,11 @@
 
 var Message = Backbone.Model.extend({
   initialize: function(message) {
-    this.set('username', message.username),
-    this.set('text', message.text),
-    this.set('roomname', message.roomname)
+    if (message !== undefined) {
+      this.set('username', message.username),
+      this.set('text', message.text),
+      this.set('roomname', message.roomname)
+    }
   }
 });
 
@@ -24,28 +26,51 @@ var Messages = Backbone.Collection.extend({
 
 
 
-var MessageView = Backbone.View.extend({
+// var MessageView = Backbone.View.extend({
+//   initialize: function() {
+//     this.model.on('change', this.render, this);
+//   },
+
+//   render: function() {
+//     var html = [
+//       '<div>',
+//         '<span class="username">',
+//           this.model.get('username'),
+//         '<span>',
+//         '<span class="messagetext">',
+//           this.model.get('text'),
+//         '</span>',
+//         '</br>',
+//       '</div>'
+//     ].join('');
+//   }
+// });
+
+var MessagesView = Backbone.View.extend({
   initialize: function() {
-    this.model.on('change: ', this.render, this);
+    this.model.on('sync', this.render, this);
   },
 
-  render: function() {
-    var html = [
-      '<div>',
-        '<span class="username">',
-          this.model.get('username'),
-        '<span>',
-        '<span class="messagetext">',
-          this.model.get('text'),
-        '</span>',
-        '</br>',
-      '</div>'
-    ].join('');
+  render: function () {
+    var html = '';
+    debugger;
+    this.model.each(function(message) {
+      html += message.get('text');
+    })
+    this.$el.append(html);
+    return this.$el;
   }
-
 });
 
-var messages = new Messages([]);
+// Create a new message model using our Message model class
+// var message = new Message('This is a message');
+
+// Create a view and associate it with this model: message
+var messages = new Messages();
+var messagesView = new MessagesView({model: messages});
+$(document).ready(function () {
+  $('body').append(messagesView.render());
+});
 
 // var commentList = [
 //   new Comment('Doug!'), // default to 0 votes
