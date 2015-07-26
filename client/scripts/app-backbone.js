@@ -1,5 +1,12 @@
 // Backbone refactor
 
+/*
+Create your Models.
+Create your views (which, at this stage, should only render initial states of their Models and not change their states).
+Bind your Views to Model events (make sure Views update themselves when their Models’ states are updated).
+Test your Views (update your Model state manually through console and see how the Views respond)
+Create your controls (which modify model state)
+*/
 var Message = Backbone.Model.extend({
   initialize: function(message) {
     if (message !== undefined) {
@@ -53,7 +60,6 @@ var MessagesView = Backbone.View.extend({
 
   render: function () {
     var html = '';
-    debugger;
     this.model.each(function(message) {
       html += message.get('text');
     })

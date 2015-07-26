@@ -1,18 +1,22 @@
 // YOUR CODE HERE:
 
 $(document).ready(function () {
+
   $('#send').on('submit', function (event) {
     app.handleSubmit();
     $('#message').val('');
     event.preventDefault();
   });
+
   $('#addroom').on('click', function () {
     var roomName = $('#roomname').val();
     app.addRoom(roomName);
   });
+
   $('#roomSelect').on('change', function () {
     app.updateMessages();
   });
+
   app.init();
 });
 
@@ -65,12 +69,12 @@ app.addMessage = function (message) {
       ': ' + app.sanitizeInput(message.text || ''),
     '</div>'
   ];
-  html = html.join('');
-  var $html = $(html);
+  html = html.join(''); // eliminates commas and joins with no spaces
+  var $html = $(html); // cache jQuery selector
   if (app.friends[message.username] === true) $html.addClass('friend'); // As we add individual messages, check to see if that message was sent by a friend
   $('#chats').append($html);
   $html.find('.username').on('click', function() { // We are anticipatorily adding click hander events to every $html message added to the DOM.
-    app.addFriend(message.username);               // In the event you click on a username for a particular message, that person gets added to friends
+    app.addFriend(message.username); // In the event you click on a username for a particular message, that person gets added to friends
   });
 };
 
